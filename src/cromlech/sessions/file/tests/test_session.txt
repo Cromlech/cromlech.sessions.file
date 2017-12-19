@@ -31,15 +31,15 @@ By default, the cookie_name is `sid` and the environ key `session`.
 
     >>> import pytest
     >>> from webtest import TestApp
-    >>> from cromlech.sessions.file.handler import FileSession
-    >>> from cromlech.sessions.file.manager import WSGISessionManager
+    >>> from cromlech.sessions.file.handler import FileSessionHandler
+    >>> from cromlech.session import SignedCookieManager, WSGISessionManager
 
     >>> folder = str(getfixture('tmpdir'))
-    >>> handler = FileSession(folder, 300)
-    >>> session_manager = WSGISessionManager(
-    ...         'secret', handler, cookie='my_sid', environ_key='sess')
+    >>> handler = FileSessionHandler(folder, 300)
+    >>> manager = SignedCookieManager('secret', handler, cookie='my_sid')
+    >>> middleware = WSGISessionManager(manager, environ_key='sess')
 
-    >>> wsgi_app = TestApp(session_manager(simple_app))
+    >>> wsgi_app = TestApp(middleware(simple_app))
     >>> result = wsgi_app.get('/')
     >>> result.status
     '200 OK'
@@ -74,11 +74,11 @@ By default, the cookie_name is `sid` and the environ key `session`.
 Timeout
 -------
 
-    >>> handler = FileSession(folder, 1)  # 1 second timeout
-    >>> session_manager = WSGISessionManager(
-    ...         'secret', handler, cookie='my_sid', environ_key='sess')
+    >>> handler = FileSessionHandler(folder, 1)  # 1 second timeout
+    >>> manager = SignedCookieManager('secret', handler, cookie='my_sid')
+    >>> middleware = WSGISessionManager(manager, environ_key='sess')
 
-    >>> wsgi_app = TestApp(session_manager(simple_app))
+    >>> wsgi_app = TestApp(middleware(simple_app))
     >>> result = wsgi_app.get('/')
     >>> result.body
     b'Called 1 time(s)'

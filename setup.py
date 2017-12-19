@@ -7,9 +7,8 @@ version = '0.1'
 
 install_requires = [
     'setuptools',
+    'cromlech.session',
     'cromlech.marshallers',
-    'itsdangerous',
-    'biscuits',
 ]
 
 tests_require = [

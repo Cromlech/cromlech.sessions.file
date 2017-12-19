@@ -3,11 +3,12 @@
 import os
 import time
 from datetime import datetime
+from cromlech.session import SessionHandler
 from cromlech.marshallers import PickleMarshaller
 from .utils import assert_sessions_folder
 
 
-class FileSession(object):
+class FileSessionHandler(SessionHandler):
     """ Files based HTTP session.
     """
 
@@ -45,8 +46,7 @@ class FileSession(object):
     def get(self, sid):
         session_path = self.get_session_file(sid)
         if session_path is None:
-            return {}
-
+            return self.new()
         session = self.marshaller.load_from(session_path)
         return session
 
