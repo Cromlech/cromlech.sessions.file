@@ -22,8 +22,6 @@ setup(
     description="Session handling for wsgi applications using files",
     long_description=(
         open("README.txt").read() + "\n" +
-        open(os.path.join("src", "cromlech", "sessions", "file",
-                          "test_session.txt")).read() + "\n" +
         open(os.path.join("docs", "HISTORY.txt")).read()),
     classifiers=[
         "Programming Language :: Python",

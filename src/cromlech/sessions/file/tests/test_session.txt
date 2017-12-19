@@ -1,0 +1,67 @@
+The middleware scenario
+------------------------
+
+In order to test the session cookie and general application flow,
+we'll start by testing the middleware. The middleware handles the
+creation of a cookie and stores a session id inside. This session is
+is signed and timestamped, in order to overcome the "guessable" nature
+of a session id and its possible weakness. It also adds another layer of
+expiration, since the signature can be (is) checked for its max age.
+
+
+The application
+---------------
+
+    >>> def simple_app(environ, start_response):
+    ...     """retained visited path, raise exception if path contain 'fail'
+    ...     """
+    ...     session = environ['sess']
+    ...     session['my_value'] = session.get('my_value', 0) + 1
+    ...     session.save()
+    ...     start_response('200 OK', [('Content-type', 'text/plain')])
+    ...     return [b'Called %i time(s)' % session['my_value']]
+
+
+The middleware is a class instanciated with the signature secret and
+a timeout for the cookie and session lifespan. The timeout is
+expressed as an integer representing the number of seconds before
+expiration.
+
+By default, the cookie_name is `sid` and the environ key `session`. 
+
+    >>> import pytest
+    >>> from webtest import TestApp
+    >>> from cromlech.sessions.file.handler import FileSession
+    >>> from cromlech.sessions.file.manager import WSGISessionManager
+
+    >>> folder = str(getfixture('tmpdir'))
+    >>> handler = FileSession(folder, 300)
+    >>> session_manager = WSGISessionManager(
+    ...         'secret', handler, cookie='my_sid', environ_key='sess')
+
+    >>> wsgi_app = TestApp(session_manager(simple_app))
+    >>> result = wsgi_app.get('/')
+    >>> result.status
+    '200 OK'
+    >>> result.headers['Set-Cookie']
+    'my_sid=...; Expires=...; Domain=localhost; Path=/'
+    >>> result.body
+    b'Called 1 time(s)'
+
+    >>> import os
+    >>> sessions = os.listdir(folder)
+    >>> assert len(sessions) == 1
+
+    >>> sid = sessions[0]
+    >>> assert handler.get_session_file(sid) is not None
+    >>> handler.get(sid)
+    {'my_value': 1}
+
+    >>> result = wsgi_app.get('/')
+    >>> result.body
+    b'Called 2 time(s)'
+
+    >>> handler.clear(sid)
+    >>> result = wsgi_app.get('/')
+    >>> result.body
+    b'Called 1 time(s)'

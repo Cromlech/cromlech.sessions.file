@@ -13,7 +13,7 @@ def assert_sessions_folder(path, create=False, pedantic=False):
             return real_path
         else:
             raise IOError('Sessions folder %s does not exist' % real_path)
-    elif not os.path.isdir(root):
+    elif not os.path.isdir(real_path):
         raise IOError('%s is not a valid folder' % real_path)
     else:
         if pedantic:
@@ -28,7 +28,7 @@ def assert_sessions_folder(path, create=False, pedantic=False):
                     'Folder `%s` rights are incorrect.' % real_path)
         else:
             # Only check read/write/execute
-            if not os.access(real_path, os.R_OK or os.W_OK or os.X_OK)
+            if not os.access(real_path, os.R_OK or os.W_OK or os.X_OK):
                 raise IOError(
                     '%s is not accessible for the current user' % real_path)
     return real_path

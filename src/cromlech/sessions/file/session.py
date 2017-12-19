@@ -9,15 +9,6 @@ class SessionDict(object):
         self._session = None
         self._modified = False
 
-    def __getattr__(self, attr):
-        return getattr(self.session, attr)
-
-    def __setattr__(self, attr, value):
-        setattr(self.session, attr, value)
-
-    def __delattr__(self, name):
-        self.session.__delattr__(name)
-
     def __getitem__(self, key):
         return self.session[key]
 
@@ -38,6 +29,9 @@ class SessionDict(object):
 
     def has_key(self, key):
         return key in self.session
+
+    def get(self, key, default=None):
+        return self.session.get(key, default)
 
     @property
     def session(self):

@@ -32,11 +32,11 @@ class FileSession(object):
         kind of decorum.
         """
         path = self.get_session_path(sid)
-        if os.path.exists(session_path):
+        if os.path.exists(path):
             if epoch is None:
                 epoch = time.time()
             fmod = os.path.getmtime(path)
-            if (fmod + self.delta) > epoch:
+            if (fmod + self.delta) < epoch:
                 os.remove(path)  # File expired, we remove
                 return None
             return path
@@ -53,7 +53,7 @@ class FileSession(object):
     def save(self, sid, data):
         assert isinstance(data, dict)
         session_path = self.get_session_path(sid)  # it might not exist
-        self.marshaller.dump_to(session_path)
+        self.marshaller.dump_to(data, session_path)
 
     def clear(self, sid):
         session_path = self.get_session_path(sid)

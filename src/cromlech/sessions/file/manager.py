@@ -21,7 +21,7 @@ class SessionManager(object):
         return str(uuid4())
 
     def refresh_session_id(self, sid):
-        return self.signer.sign(sid)
+        return str(self.signer.sign(sid), 'utf-8')
 
     def get_session_id(self, cookie):
         if cookie is not None:
@@ -30,7 +30,7 @@ class SessionManager(object):
             if signed_sid is not None:
                 # maybe we want an error handling here.
                 sid = self.signer.unsign(signed_sid, max_age=self.delta)
-                return sid, signed_sid
+                return str(sid, 'utf-8')
         return self.generate_session_id()
 
     def get_session_dict(self, cookie):
