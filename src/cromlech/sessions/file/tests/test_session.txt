@@ -65,3 +65,36 @@ By default, the cookie_name is `sid` and the environ key `session`.
     >>> result = wsgi_app.get('/')
     >>> result.body
     b'Called 1 time(s)'
+
+    >>> handler.clear(sid)
+    >>> sessions = os.listdir(folder)
+    >>> assert len(sessions) == 0
+
+
+Timeout
+-------
+
+    >>> handler = FileSession(folder, 1)  # 1 second timeout
+    >>> session_manager = WSGISessionManager(
+    ...         'secret', handler, cookie='my_sid', environ_key='sess')
+
+    >>> wsgi_app = TestApp(session_manager(simple_app))
+    >>> result = wsgi_app.get('/')
+    >>> result.body
+    b'Called 1 time(s)'
+
+    >>> import time
+    >>> time.sleep(1)
+
+Still here :
+
+    >>> sessions = os.listdir(folder)
+    >>> assert len(sessions) == 1
+
+Accessing it will implicitly expire it and create a new one but
+we won't persist the new one :
+
+    >>> sid = sessions[0]
+    >>> handler.get(sid)
+    {}
+    >>> assert os.listdir(folder) == []
