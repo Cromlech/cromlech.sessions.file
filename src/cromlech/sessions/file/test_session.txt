@@ -1,0 +1,8 @@
+Secret
+------
+
+  >>> from cromlech.filesession.handler import FileSession
+  >>> handler = FileSession('my_secret', 300)
+
+  >>> from cromlech.filesession.manager import WSGISessionManager
+  >>>
