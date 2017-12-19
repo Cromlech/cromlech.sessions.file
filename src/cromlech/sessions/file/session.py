@@ -54,7 +54,7 @@ class SessionDict(object):
 
     def persist(self, force=False):
         if force or (not force and self._modified):
-            self.handler.save(self.sid, self._session)
+            self.handler.set(self.sid, self._session)
             self._modified = False
         elif self.accessed:
             # here update the modified time

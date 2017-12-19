@@ -50,7 +50,7 @@ class FileSession(object):
         session = self.marshaller.load_from(session_path)
         return session
 
-    def save(self, sid, data):
+    def set(self, sid, data):
         assert isinstance(data, dict)
         session_path = self.get_session_path(sid)  # it might not exist
         self.marshaller.dump_to(data, session_path)
@@ -61,6 +61,10 @@ class FileSession(object):
             os.remove(session_path)
 
     def flush_expired_sessions(self):
+        """This method should be used in an asynchroneous task.
+        Running this during an HTTP request/response cycle, synchroneously
+        can result in low performances.
+        """
         now = time.time()
         for sid in iter(self):
             path = self.get_session_file(sid, epoch=now)
