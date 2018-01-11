@@ -19,7 +19,8 @@ The application
     ...     session['my_value'] = session.get('my_value', 0) + 1
     ...     session.save()
     ...     start_response('200 OK', [('Content-type', 'text/plain')])
-    ...     return [b'Called %i time(s)' % session['my_value']]
+    ...     return ['Called {0} time(s)'.format(
+    ...         session['my_value']).encode('utf-8')]
 
 
 The middleware is a class instanciated with the signature secret and
