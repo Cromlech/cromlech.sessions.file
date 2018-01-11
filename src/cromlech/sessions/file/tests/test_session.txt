@@ -31,11 +31,11 @@ By default, the cookie_name is `sid` and the environ key `session`.
 
     >>> import pytest
     >>> from webtest import TestApp
-    >>> from cromlech.sessions.file.handler import FileSessionHandler
+    >>> from cromlech.sessions.file import FileStore
     >>> from cromlech.session import SignedCookieManager, WSGISessionManager
 
     >>> folder = str(getfixture('tmpdir'))
-    >>> handler = FileSessionHandler(folder, 300)
+    >>> handler = FileStore(folder, 300)
     >>> manager = SignedCookieManager('secret', handler, cookie='my_sid')
     >>> middleware = WSGISessionManager(manager, environ_key='sess')
 
@@ -74,7 +74,7 @@ By default, the cookie_name is `sid` and the environ key `session`.
 Timeout
 -------
 
-    >>> handler = FileSessionHandler(folder, 1)  # 1 second timeout
+    >>> handler = FileStore(folder, 1)  # 1 second timeout
     >>> manager = SignedCookieManager('secret', handler, cookie='my_sid')
     >>> middleware = WSGISessionManager(manager, environ_key='sess')
 

@@ -3,12 +3,12 @@
 import os
 import time
 from datetime import datetime
-from cromlech.session import SessionHandler
+from cromlech.session import Store
 from cromlech.marshallers import PickleMarshaller
 from .utils import assert_sessions_folder
 
 
-class FileSessionHandler(SessionHandler):
+class FileStore(Store):
     """ Files based HTTP session.
     """
 
@@ -59,6 +59,8 @@ class FileSessionHandler(SessionHandler):
         session_path = self.get_session_path(sid)
         if session_path is not None:
             os.remove(session_path)
+
+    delete = clear
 
     def flush_expired_sessions(self):
         """This method should be used in an asynchroneous task.
