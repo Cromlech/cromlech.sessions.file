@@ -1,0 +1,2 @@
+git+https://github.com/Cromlech/cromlech.session.git#egg=cromlech.session
+git+https://github.com/Cromlech/cromlech.marshallers.git#egg=cromlech.marshallers

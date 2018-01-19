@@ -10,16 +10,10 @@ python:
 cache:
   pip: true
 
-before_install:
-  - pip install --upgrade pip setuptools zc.buildout
-
 install:
-  - python bootstrap.py
-  - bin/buildout
+  - pip install -U pip setuptools
+  - pip install -r requirements.txt
+  - pip install -U -e ".[test]"
 
 script:
-  - bin/pytest
-
-after_success:
-  - pip install -q coveralls python-coveralls==2.5.0
-  - coveralls
+  - pytest src --doctest-modules
