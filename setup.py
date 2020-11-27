@@ -13,6 +13,7 @@ install_requires = [
 
 tests_require = [
     'WebTest',
+    'pytest',
 ]
 
 setup(
